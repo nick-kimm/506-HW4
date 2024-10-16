@@ -9,14 +9,22 @@ format:
 ##Problem 1 
 
 ```{r}
-1 + 1
+library(tidyverse)
+library(nycflights13)
 ```
 
-You can add options to executable code like this 
+#part a:
 
+Median and Mean departure delay per airport
 ```{r}
-#| echo: false
-2 * 2
+flights %>% group_by(origin) %>% 
+  summarize(med_dep_delay = median(dep_delay)) %>%
+  ungroup()
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+
+
+
+
+
+
