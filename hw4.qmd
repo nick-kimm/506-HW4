@@ -34,9 +34,11 @@ How many flights did the aircraft model with the fastest average speed take?
 ```{r}
 flights
 planes
-airports
-
-planes %>% filter(speed != NA)
+```
+```{r}
+jflights<-inner_join(flights, planes, by="tailnum")
+jflights %>% group_by(model) %>% 
+  summarise(count = n(),.groups = 'drop',speed = mean(distance/air_time, na.rm = TRUE))
 ```
 
 
