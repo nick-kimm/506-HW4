@@ -47,21 +47,43 @@ nnmaps<-read.csv("/Users/nicholaskim/Documents/STAT 506/HW4/chicago-nmmaps.csv")
 ```
 
 ```{r}
-nnmaps %>% filter(month=="Apr",year==1999) %>% summarise(avg_temp = mean(temp))
+month= 13
+is.numeric(month)==TRUE & month >12 | month < 1
 ```
 
 Writing function that allows user to request average temperature for a given month
 ```{r}
+#' Get Temp 
+#'A function that will return the mean, median, or other inputted function temperature for a specified month and year. The function works by first checking if the inputted variables are what we would expect. If it a numeric between 1-12 then it will filter by the respective column variables and run the specified function on the column temp for that dataset.If month is a string we will first convert everything to lower to ensure the string isn't case sensitive to upper and lower cases. In addition, will sub string the inputted month to the first 3 as that is how it is stored in our dataset nnmaps. Will then output error messages if the numeric value for month isn't b/t 1-12 and if year isn't numeric
+#'
+#' @param month (int or string)
+#' @param year (int)
+#' @param data 
+#' @param celsius (binary)
+#' @param average_fn (default = mean)
+#'
+#' @return temperature under specified function for a given year and month
+#' 
+#' @examples
 get_temp <- function(month,year,data,celsius=FALSE,average_fn=mean){
-  if(is.numeric(month)!=TRUE | is.character(month)!=TRUE){
-    return("Month should be value 1-12 or character")
+  if(is.numeric(month)==TRUE & month <= 12 & month >= 1){
+    temp<-data %>% 
+      filter(month_numeric==!!month,year==year) #!! will ensure R will treat month as a var not as hardcoded values
+        %>% 
+          summarise(temperature=ifelse(celsius==TRUE,average_fn((temp-32)*(5/9)),average_fn(temp)))
+    return(temp)
   }
-  elif(is.numeric(year)!=TRUE){
-    return("Year should be a numeric value")
+  else if(is.numeric(month)==TRUE & month >12 | month < 1){
+    return("Month should be a value from 1-12")
   }
-  else{temp<- data %>% filter(month==month,year==year) %>% 
-    summarise(avg_temp=average_fn(temp))
-  return(temp)
+  else if(is.character(month)==TRUE){
+    month<-substr(month,1,3)
+    temp<- data %>% filter(tolower(month)==tolower(month),year==year) %>% 
+      summarise(temperature=ifelse(celsius==TRUE,average_fn((temp-32)*(5/9)),average_fn(temp)))
+    return(temp)
+  }
+  else{
+   return("Year should be numeric")
   }
 }
 ```
@@ -69,13 +91,13 @@ get_temp <- function(month,year,data,celsius=FALSE,average_fn=mean){
 Testing cases:
 ```{r}
 get_temp("Apr", 1999, data = nnmaps)
-#get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
-#get_temp(10, 1998, data = nnmaps, average_fn = median)
-#get_temp(13, 1998, data = nnmaps)
-#get_temp(2, 2005, data = nnmaps)
-#get_temp("November", 1999, data =nnmaps, celsius = TRUE,
-        # average_fn = function(x) {
-         #  x %>% sort -> x
-        #   x[2:(length(x) - 1)] %>% mean %>% return
-       #  })
+get_temp("Apr", 1999, data = nnmaps, celsius = TRUE)
+get_temp(10, 1998, data = nnmaps, average_fn = median)
+get_temp(13, 1998, data = nnmaps)
+get_temp(2, 2005, data = nnmaps)
+get_temp("November", 1999, data =nnmaps, celsius = TRUE,
+         average_fn = function(x) {
+           x %>% sort -> x
+           x[2:(length(x) - 1)] %>% mean %>% return
+         })
 ```
