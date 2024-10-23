@@ -46,11 +46,6 @@ jflights %>% group_by(model) %>%
 nnmaps<-read.csv("/Users/nicholaskim/Documents/STAT 506/HW4/chicago-nmmaps.csv")
 ```
 
-```{r}
-month= 13
-is.numeric(month)==TRUE & month >12 | month < 1
-```
-
 Writing function that allows user to request average temperature for a given month
 ```{r}
 #' Get Temp 
@@ -101,3 +96,51 @@ get_temp("November", 1999, data =nnmaps, celsius = TRUE,
            x[2:(length(x) - 1)] %>% mean %>% return
          })
 ```
+
+##Problem 3
+
+```{r}
+imp_mk<-read.csv("/Users/nicholaskim/Documents/STAT 506/HW4/df_for_ml_improved_new_market.csv")
+```
+
+#part a:
+
+Is there a change in the sales price in USD over time?
+```{r}
+library(ggplot2)
+imp_mk<-imp_mk %>% group_by(year) %>% 
+  mutate(meanprice=mean(price_usd)) %>% ungroup()
+ggplot(data=imp_mk,aes(x=year,y=meanprice))+
+  geom_line()+
+  labs(title="Sales Price over Time")+
+       xlab("Date")+
+       ylab("Mean Price (USD)")
+```
+#part b:
+
+Does the distribution of genre of sales across years appear to change?
+```{r}
+genres_imp<-imp_mk %>% select(year,Genre___Photography,Genre___Print,Genre___Sculpture,Genre___Painting,Genre___Others) %>% 
+  mutate(genre_type = ifelse(Genre___Photography==1,1,ifelse(Genre___Print==1,2,ifelse(Genre___Sculpture==1,3,4))))
+
+ggplot(data=genres_imp,aes(x=year,fill=as.factor(genre_type)))+
+  geom_bar()+
+  facet_grid(vars(genre_type))+
+  labs(title="Distribution of Genre of Sales over Years")+
+  xlab("Year")+
+  ylab("Count")+
+  scale_fill_discrete(name="Genres",
+                      labels=c("Photography","Print","Sculpture","Painting","Other"))
+
+```
+From the output above we can see that the genres don't seem to affect the overall distribution of sales over the years. They all seem to roughly follow a rising number of sales as the years go on. 
+
+#part c:
+
+How does the genre affect the change in sales price over time?
+```{r}
+ggplot()
+```
+
+
+
