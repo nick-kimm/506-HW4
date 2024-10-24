@@ -5,6 +5,7 @@ format:
   html:
     embed-resources: true
 ---
+Link to my [github](https://github.com/nick-kimm/506-HW4) repository 
 
 ##Problem 1 
 
